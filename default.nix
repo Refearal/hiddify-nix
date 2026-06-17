@@ -9,7 +9,9 @@ stdenv.mkDerivation {
   nativeBuildInputs = with pkgs; [
     zstd
     autoPatchelfHook
+    makeWrapper
   ];
+  autoPatchelfIgnoreMissingDeps = true;
   buildInputs = with pkgs; [
     curl
     gtk3
@@ -26,6 +28,7 @@ stdenv.mkDerivation {
     ayatana-ido
     libdbusmenu-gtk3
   ];
+  runtimeDependencies = [ "$ORIGIN/lib" ];
   unpackPhase = ''
   ar x $src
   tar -xf data.tar.zst
@@ -38,5 +41,9 @@ stdenv.mkDerivation {
   mkdir -p $out/bin
   ln -s $out/share/hiddify/hiddify $out/bin/hiddify
   ln -s $out/share/hiddify/HiddifyCli $out/bin/HiddifyCli
+  '';
+  postFixup = ''
+  wrapProgram $out/share/hiddify/hiddify --prefix LD_LIBRARY_PATH : "$out/share/hiddify/lib"
+  wrapProgram $out/share/hiddify/HiddifyCli --prefix LD_LIBRARY_PATH : "$out/share/hiddify/lib"
   '';
 }
