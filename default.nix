@@ -8,8 +8,10 @@ stdenv.mkDerivation {
   };
   nativeBuildInputs = with pkgs; [
     zstd
+    autoPatchelfHook
   ];
   buildInputs = with pkgs; [
+    curl
     gtk3
     glib
     pango
